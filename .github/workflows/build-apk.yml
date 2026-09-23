@@ -1,0 +1,77 @@
+name: APK bouwen
+
+on:
+  push:
+    branches: ["**"]
+    paths-ignore: ["**.md"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.5
+          cache: true
+
+      - name: Afhankelijkheden
+        run: flutter pub get
+
+      - name: Controleren
+        run: flutter analyze
+
+      - name: Testen
+        run: flutter test
+
+      - name: Ondertekeningssleutel neerzetten
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$KEYSTORE_PASSWORD" ]; then
+            echo "::error::De Secrets ANDROID_KEYSTORE_BASE64 en ANDROID_KEYSTORE_PASSWORD ontbreken. Zie de README."
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/app/spelleider.jks
+          cat > android/key.properties <<PROPS
+          storeFile=spelleider.jks
+          storePassword=$KEYSTORE_PASSWORD
+          keyAlias=spelleider
+          keyPassword=$KEYSTORE_PASSWORD
+          PROPS
+
+      - name: APK bouwen
+        run: flutter build apk --release --build-number=${{ github.run_number }}
+
+      - name: APK hernoemen
+        run: cp build/app/outputs/flutter-apk/app-release.apk Spelleider.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Spelleider-apk
+          path: Spelleider.apk
+
+      - name: Release publiceren
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: spelleider-build-${{ github.run_number }}
+          name: Spelleider (build ${{ github.run_number }})
+          target_commitish: ${{ github.sha }}
+          make_latest: true
+          body: |
+            Nieuwe versie van de Spelleider-app.
+            Download **Spelleider.apk** hieronder op je Android-telefoon en installeer hem.
+            Zie de README voor de installatiestappen.
+          files: Spelleider.apk

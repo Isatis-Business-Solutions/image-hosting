@@ -63,6 +63,11 @@ jobs:
           name: Spelleider-apk
           path: Spelleider.apk
 
+      - name: Oude release met de vorige sleutel opruimen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release delete spelleider-build-1 --cleanup-tag --yes --repo "$GITHUB_REPOSITORY" || echo "Niets op te ruimen."
+
       - name: Release publiceren
         uses: softprops/action-gh-release@v2
         with:

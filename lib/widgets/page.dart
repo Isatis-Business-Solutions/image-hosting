@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../relay/relay_store.dart';
 import '../screens/settings_screen.dart';
 import '../store.dart';
 import '../theme.dart';
@@ -35,10 +36,16 @@ class PageFrame extends StatelessWidget {
       body: SafeArea(
         bottom: false,
         child: ListenableBuilder(
-          listenable: store,
+          listenable: Listenable.merge([store, relay]),
           builder: (context, _) => CustomScrollView(
             controller: controller,
             slivers: [
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(16, 10, 16, 0),
+                  child: ModeSwitch(),
+                ),
+              ),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 16, 8, 0),
@@ -88,6 +95,55 @@ class PageFrame extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Schakelaar tussen deel 1 (fotospel) en deel 2 (estafette).
+class ModeSwitch extends StatelessWidget {
+  const ModeSwitch({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    Widget item(AppMode m, IconData icon, String label) {
+      final sel = relay.mode == m;
+      return Expanded(
+        child: GestureDetector(
+          onTap: () => relay.setMode(m),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(vertical: 9),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              gradient: sel ? AppColors.yellowGradient : null,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon,
+                    size: 18,
+                    color: sel ? AppColors.black : AppColors.muted),
+                const SizedBox(width: 6),
+                Text(label,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        color: sel ? AppColors.black : AppColors.muted)),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Glass(
+      padding: const EdgeInsets.all(4),
+      radius: 18,
+      child: Row(
+        children: [
+          item(AppMode.photo, Icons.photo_camera_rounded, 'Fotospel'),
+          item(AppMode.relay, Icons.directions_run_rounded, 'Estafette'),
+        ],
       ),
     );
   }

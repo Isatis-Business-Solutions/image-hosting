@@ -19,6 +19,7 @@ class PlayersScreen extends StatelessWidget {
         return '$n spelers · $m met e-mail';
       },
       floating: FloatingActionButton.extended(
+        heroTag: 'photo-add-player',
         onPressed: () => showPlayerDialog(context),
         icon: const Icon(Icons.person_add_alt_1_rounded),
         label: const Text('Speler',

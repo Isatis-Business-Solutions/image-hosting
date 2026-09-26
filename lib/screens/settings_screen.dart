@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../relay/relay_store.dart';
 import '../store.dart';
 import '../theme.dart';
 
@@ -26,7 +27,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Alle spelers, teams, foto\'s en uitslagen worden '
+              const Text('Alles van het fotospel én de estafette (spelers, '
+                  'teams, groepen, foto\'s, tijden en uitslagen) wordt '
                   'definitief verwijderd. Typ VERWIJDER om te bevestigen.'),
               const SizedBox(height: 12),
               TextField(
@@ -56,6 +58,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
     if (ok != true) return;
+    relay.resetAll();
     await store.wipeAll();
     if (!mounted) return;
     toast(context, 'Alles is verwijderd.');
@@ -68,11 +71,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Scaffold(
         appBar: AppBar(title: const Text('Instellingen')),
         body: ListenableBuilder(
-          listenable: store,
+          listenable: Listenable.merge([store, relay]),
           builder: (context, _) => ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              const SectionTitle('Timer'),
+              const SectionTitle('Fotospel · timer'),
               Glass(
                 child: Row(
                   children: [
@@ -100,16 +103,61 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ],
                 ),
               ),
+              const SectionTitle('Estafette'),
+              Glass(
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Text('Groepen per ronde',
+                          style: TextStyle(fontWeight: FontWeight.w700)),
+                    ),
+                    IconButton(
+                      onPressed: relay.groupsPerRun > 1
+                          ? () => relay.setGroupsPerRun(relay.groupsPerRun - 1)
+                          : null,
+                      icon: const Icon(Icons.remove_circle_outline_rounded),
+                    ),
+                    Text('${relay.groupsPerRun}',
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w800)),
+                    IconButton(
+                      onPressed: relay.groupsPerRun < 12
+                          ? () => relay.setGroupsPerRun(relay.groupsPerRun + 1)
+                          : null,
+                      icon: const Icon(Icons.add_circle_outline_rounded),
+                    ),
+                  ],
+                ),
+              ),
               const SectionTitle('Overzicht'),
               Glass(
                 child: Column(
                   children: [
-                    _stat('Spelers', store.players.length),
-                    _stat('Teams', store.teams.length),
-                    _stat("Foto's", store.photos.length),
-                    _stat('Gespeelde potjes', store.history.length),
+                    _stat('Fotospel · spelers', store.players.length),
+                    _stat('Fotospel · teams', store.teams.length),
+                    _stat("Fotospel · foto's", store.photos.length),
+                    _stat('Fotospel · gespeelde potjes', store.history.length),
+                    const Divider(height: 20),
+                    _stat('Estafette · spelers', relay.players.length),
+                    _stat('Estafette · groepen', relay.groups.length),
+                    _stat('Estafette · gelopen rondes', relay.runs.length),
                   ],
                 ),
+              ),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                icon: const Icon(Icons.restart_alt_rounded),
+                label: const Text('Estafette resetten'),
+                onPressed: () async {
+                  if (await confirmDialog(context,
+                      title: 'Estafette resetten?',
+                      message: 'Alle estafettespelers, groepen, tijden en de '
+                          'finale worden gewist. Het fotospel blijft staan.',
+                      confirm: 'Resetten',
+                      danger: true)) {
+                    relay.resetAll();
+                  }
+                },
               ),
               const SizedBox(height: 32),
               Center(
@@ -117,7 +165,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onTap: () => setState(() => _taps++),
                   child: const Padding(
                     padding: EdgeInsets.all(12),
-                    child: Text('Spelleider · versie 1.0',
+                    child: Text('Spelleider · versie 1.1',
                         style: TextStyle(color: AppColors.muted)),
                   ),
                 ),

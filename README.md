@@ -6,7 +6,11 @@ spelleider. Spelers hebben de app niet nodig.
 Alles gebeurt op één telefoon. Alle gegevens (spelers, teams, foto's en
 uitslagen) blijven lokaal op die telefoon. Er is geen server en geen account.
 
-## Wat kan de app?
+De app heeft twee delen. Je wisselt ertussen met de schakelaar bovenin:
+**Fotospel | Estafette**. De delen hebben elk hun eigen spelers, teams en
+scores.
+
+## Deel 1: Fotospel
 
 | Tabblad | Wat doe je er? |
 | --- | --- |
@@ -36,12 +40,28 @@ uitslagen) blijven lokaal op die telefoon. Er is geen server en geen account.
 - Een afgerond potje pas je aan via **Scores**: tik op het potje.
 - "Alle spelers wissen" (bij Spelers) en "Teams wissen" (bij Teams) beginnen die fase opnieuw.
 
+## Deel 2: Estafette
+
+Alle spellen direct achter elkaar als één estafette, tegen de klok. Daarna
+spelen de 2 snelste groepen de touwtrekfinale.
+
+| Tabblad | Wat doe je er? |
+| --- | --- |
+| **Spelers** | Namen invoeren. Een e-mailadres is niet nodig. Met **Namen overnemen uit Fotospel** hoef je niet alles opnieuw te typen. |
+| **Groepen** | Met één knop willekeurig indelen, zoveel mogelijk in groepen van 4. Gaat het niet precies op, dan komen er groepen van 3 of 5. Sleep een speler op een andere speler om ze te wisselen, of op een groep om hem daarheen te verplaatsen. |
+| **Ronde** | Kies de groepen die tegelijk starten (standaard 2, aan te passen bij Instellingen) en druk op **Start de timer**. Elke groep heeft een eigen **STOP**-knop. Per ongeluk gestopt? Tik op **Oeps, verder**. Zijn alle groepen binnen, dan druk je op **Ronde opslaan**. |
+| **Scores** | Het klassement, met de snelste tijd bovenaan. De top 2 is gemarkeerd als *Finale*. Met **Start touwtrekfinale** zet je die twee tegenover elkaar. Tik daarna op de winnaar. Tik op een gelopen ronde om een tijd te corrigeren of te verwijderen. |
+
+Loopt een groep vaker, dan telt de tijd van de laatste ronde.
+
 ### Alles verwijderen (na afloop)
 
 Ga naar **Instellingen** (het schuifjes-icoon rechtsboven) en tik **5 keer op
-"Spelleider · versie 1.0"**. Dan verschijnt de knop **Alles verwijderen**. Typ
-`VERWIJDER` om te bevestigen. Alle spelers, teams, foto's en uitslagen worden
-dan gewist.
+"Spelleider · versie 1.1"**. Dan verschijnt de knop **Alles verwijderen**. Typ
+`VERWIJDER` om te bevestigen. Alles van beide delen wordt dan gewist.
+
+Wil je alleen de estafette opnieuw beginnen? Gebruik dan **Estafette
+resetten** bij Instellingen.
 
 ## Installeren op je telefoon
 

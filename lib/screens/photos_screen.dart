@@ -75,6 +75,7 @@ class PhotosScreen extends StatelessWidget {
       title: "Foto's",
       subtitle: () => "${store.photos.length} foto's in de pool",
       floating: FloatingActionButton.extended(
+        heroTag: 'photo-add-photo',
         onPressed: () => _add(context),
         icon: const Icon(Icons.add_a_photo_rounded),
         label: const Text('Foto',
